@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sysweb Help</title>
+    <style type="text/css">
+
+        body{
+            font-family: Consolas;
+        }
+
+        tr td:first-child{
+            text-align: right;
+        }
+
+        table {
+            border-top: 1px #333333 solid;
+            border-left: 1px #333333 solid;
+        }
+
+        tr {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        tr td, tr th {
+            margin: 0px;
+            border-bottom: 1px #333333 solid;
+            border-right: 1px #333333 solid;
+            padding: 3px 6px;
+        }
+
+        .object{
+            color: #80f;
+        }
+
+        .param{
+            color: #f80;
+        }
+
+    </style>
+</head>
+<body>
+<table cellspacing="0" colspacing="0">
+    <thead>
+    <tr>
+        <th>Command</th>
+        <th>Params</th>
+        <th>API Method</th>
+    </tr>
+    </thead>
+        <tbody>
+
+        <tr>
+            <td>login</td>
+            <td>-e [email] -p [password]</td>
+            <td>Sysweb<span class="object">.User</span>.login(<span class="param">username</span>, <span class="param">password</span>)</td>
+        </tr>
+        <tr>
+            <td>register</td>
+            <td>-e [email] -p [password]</td>
+            <td>Sysweb<span class="object">.User</span>.register(<span class="param">username</span>, <span class="param">password</span>)</td>
+        </tr>
+        <tr>
+            <td>cd</td>
+            <td>path</td>
+            <td>Sysweb<span class="object">.fs</span>.cd(<span class="param">path</span>)</td>
+        </tr>
+        <tr>
+            <td>ls</td>
+            <td>[path]</td>
+            <td>Sysweb<span class="object">.fs</span>.ls(<span class="param">path</span>)</td>
+        </tr>
+        <tr>
+            <td>mkdir</td>
+            <td>path</td>
+            <td>Sysweb<span class="object">.fs</span>.mkdir(<span class="param">path</span>)</td>
+        </tr>
+        <tr>
+            <td>touch</td>
+            <td>path</td>
+            <td>Sysweb<span class="object">.fs</span>.touch(<span class="param">path</span>)</td>
+        </tr>
+        <tr>
+            <td>mv</td>
+            <td>source dest</td>
+            <td>Sysweb<span class="object">.fs</span>.mv(<span class="param">source</span>, <span class="param">dest</span>)</td>
+        </tr>
+        <tr>
+            <td>cp</td>
+            <td>source dest</td>
+            <td>Sysweb<span class="object">.fs</span>.cp(<span class="param">source</span>, <span class="param">dest</span>)</td>
+        </tr>
+        <tr>
+            <td>rm</td>
+            <td>path</td>
+            <td>Sysweb<span class="object">.fs</span>.rm(<span class="param">path</span>)</td>
+        </tr>
+        <tr>
+            <td>stat</td>
+            <td>path</td>
+            <td>Sysweb<span class="object">.fs</span>.stat(<span class="param">path</span>)</td>
+        </tr>
+        <tr>
+            <td>read</td>
+            <td>path</td>
+            <td>Sysweb<span class="object">.fs</span>.read(<span class="param">path</span>)</td>
+        </tr>
+        <tr>
+            <td>write</td>
+            <td>path text</td>
+            <td>Sysweb<span class="object">.fs</span>.write(<span class="param">path</span>, <span class="param">text</span>)</td>
+        </tr>
+        <tr>
+            <td>append</td>
+            <td>path text</td>
+            <td>Sysweb<span class="object">.fs</span>.append(<span class="param">path</span>, <span class="param">text</span>)</td>
+        </tr>
+        <tr>
+            <td>echo</td>
+            <td>text >> path</td>
+            <td>Sysweb<span class="object">.fs</span>.echo(<span class="param">path</span>, <span class="param">text</span>)</td>
+        </tr>
+        <tr>
+            <td>head</td>
+            <td>path</td>
+            <td>Sysweb<span class="object">.fs</span>.head(<span class="param">path</span>)</td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

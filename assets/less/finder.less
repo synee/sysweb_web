@@ -1,0 +1,68 @@
+.application-finder {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    .finder-icon {
+        background-image: url("/assets/images/icons-files.png");
+        display: inline-block;
+        width: 56px;
+        height: 48px;
+        background-size: 327px;
+        &.dir {
+            background-position: -5px -8px;
+        }
+        &.file {
+            background-position: -199px -137px;
+        }
+    }
+    .topbar {
+        border-bottom: 1px solid #efefef;
+        padding: 2px;
+        .action {
+            padding: 5px;
+            display: inline-block;
+            cursor: pointer;
+            border-right: 1px solid #ccc;
+            font-size: 12px;
+            &:last-child{
+                border-right: 0;
+            }
+            &.action-group{
+                ul{
+                    display: none;
+                }
+                &:hover{
+                    ul{
+                        position: absolute;
+                        padding: 0;
+                        margin: 0px;
+                        background: #fff;
+                        border: 1px solid #dedede;
+                        top: 24px;
+                        left: 0px;
+                        display: block;
+                        width: 100px;
+                    }
+                }
+            }
+        }
+    }
+    .container {
+        .finder-item {
+            padding: 5px 10px;
+            color: #333;
+            margin: 5px;
+            display: inline-block;
+            cursor: pointer;
+            text-align: center;
+            width: 95px;
+            .finder-item-name {
+                display: inline-block;
+                width: 100%;
+            }
+        }
+    }
+}

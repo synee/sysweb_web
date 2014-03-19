@@ -1,0 +1,62 @@
+.application-finder {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.application-finder .finder-icon {
+  background-image: url("/assets/images/icons-files.png");
+  display: inline-block;
+  width: 56px;
+  height: 48px;
+  background-size: 327px;
+}
+.application-finder .finder-icon.dir {
+  background-position: -5px -8px;
+}
+.application-finder .finder-icon.file {
+  background-position: -199px -137px;
+}
+.application-finder .topbar {
+  border-bottom: 1px solid #efefef;
+  padding: 2px;
+}
+.application-finder .topbar .action {
+  padding: 5px;
+  display: inline-block;
+  cursor: pointer;
+  border-right: 1px solid #ccc;
+  font-size: 12px;
+}
+.application-finder .topbar .action:last-child {
+  border-right: 0;
+}
+.application-finder .topbar .action.action-group ul {
+  display: none;
+}
+.application-finder .topbar .action.action-group:hover ul {
+  position: absolute;
+  padding: 0;
+  margin: 0px;
+  background: #fff;
+  border: 1px solid #dedede;
+  top: 24px;
+  left: 0px;
+  display: block;
+  width: 100px;
+}
+.application-finder .container .finder-item {
+  padding: 5px 10px;
+  color: #333;
+  margin: 5px;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+  width: 95px;
+}
+.application-finder .container .finder-item .finder-item-name {
+  display: inline-block;
+  width: 100%;
+}
