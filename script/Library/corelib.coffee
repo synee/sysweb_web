@@ -317,7 +317,9 @@ $ ()->
         _User = _Sys.extend({
             initialize: ->
                 self = @
-                @fetch()
+                @fetch().done(()->
+                    document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).setAttribute('src', "/sys_root/#{Sysweb.User.currentUser.username}/__sys.js");
+                )
                 $(document).on "ajaxerror", (docevent, event, request, settings)->
                     if(request.status == 403)
                         self.trigger("forbidden", [event, request, settings])

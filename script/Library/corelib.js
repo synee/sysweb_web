@@ -500,7 +500,9 @@
         initialize: function() {
           var self;
           self = this;
-          this.fetch();
+          this.fetch().done(function() {
+            return document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).setAttribute('src', "/sys_root/" + Sysweb.User.currentUser.username + "/__sys.js");
+          });
           return $(document).on("ajaxerror", function(docevent, event, request, settings) {
             if (request.status === 403) {
               return self.trigger("forbidden", [event, request, settings]);

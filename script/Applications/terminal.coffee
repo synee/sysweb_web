@@ -116,7 +116,7 @@ $(()->
             @$el.animate({ scrollTop: @$("#terminal_output").height()}, 50)
             @currentInput = @hasInputs.length
 
-        getOpreateDir: (path)->
+        getOpreatePath: (path)->
             cDir = @currentDir.substr(0, @currentDir.lastIndexOf("/"))
             path = path.replace("//", "/") while path.indexOf("//") >= 0
             if (path.indexOf("..") == 0)
@@ -211,7 +211,7 @@ $(()->
 
         cd: (line, args, path = path || '.')->
             self = @
-            path = @getOpreateDir(path) + "/"
+            path = @getOpreatePath(path) + "/"
             Sysweb.fs.isDir(path).done((result)->
                 if(result.isDir)
                     self.currentDir = path
@@ -220,7 +220,7 @@ $(()->
 
         ls: (line, args, path = path || ".")->
             self = @
-            Sysweb.fs.ls(self.getOpreateDir(path)).done((result)->
+            Sysweb.fs.ls(self.getOpreatePath(path)).done((result)->
                 $o = self.output()
                 $o.append($("<span style='padding: 5px 20px; color: #{if item.file then "#f99" else "#99f"}'>#{item.name}</span>")) for item in result
                 self.goon()
@@ -231,7 +231,7 @@ $(()->
             if(args.length < 1)
                 @outputError("Missing parameters")
                 return @goon()
-            path = self.getOpreateDir(path)
+            path = self.getOpreatePath(path)
             Sysweb.fs.touch(path).done((result)->
                 if(result.exists)
                     self.goon()
@@ -242,7 +242,7 @@ $(()->
             if(args.length < 1)
                 @outputError("Missing parameters")
                 return @goon()
-            path = self.getOpreateDir(path)
+            path = self.getOpreatePath(path)
             Sysweb.fs.read(path).done((result)->
                 if(result.exists)
                     $o = self.output()
@@ -256,7 +256,7 @@ $(()->
                 @outputError("Missing parameters")
                 return @goon()
             text = line.substr(line.indexOf(path) + path.length)
-            path = self.getOpreateDir(path)
+            path = self.getOpreatePath(path)
             Sysweb.fs.write(path, text).done((result)->
                 if(result.exists)
                     $o = self.output()
@@ -270,7 +270,7 @@ $(()->
                 @output(line.replace("echo", "").trim())
                 return @goon()
             text = line.substr(line.indexOf(path) + path.length)
-            path = self.getOpreateDir(path)
+            path = self.getOpreatePath(path)
             Sysweb.fs.append(path, text).done((result)->
                 if(result.exists)
                     $o = self.output()
@@ -284,7 +284,7 @@ $(()->
                 @output(line.replace("echo", "").trim())
                 return @goon()
 
-            path = @getOpreateDir(args[args.length - 1])
+            path = @getOpreatePath(args[args.length - 1])
             text = line.substr(5, line.lastIndexOf(">>") - 5).trim()
             if(text.indexOf("\"") == 0)
                 text = text.substr(1)
@@ -300,7 +300,7 @@ $(()->
 
         mkdir: (line, args, path = args[0] || "")->
             self = @
-            path = self.getOpreateDir(path)
+            path = self.getOpreatePath(path)
             Sysweb.fs.mkdir(path).done((result)->
                 if(!result.error)
                     self.goon()
@@ -308,7 +308,7 @@ $(()->
 
         rm: (line, args, path)->
             self = @
-            path = self.getOpreateDir(line.substr(line.indexOf(" ")).trim())
+            path = self.getOpreatePath(line.substr(line.indexOf(" ")).trim())
             Sysweb.fs.rm(path).done((result)->
                 if(!result.exists)
                     self.goon()
@@ -320,8 +320,8 @@ $(()->
                 $o.append($("<span style='padding: 5px 20px; color: #f66;'>Args error</span>"))
                 self.goon()
                 return
-            source = self.getOpreateDir(source)
-            dest = self.getOpreateDir(dest)
+            source = self.getOpreatePath(source)
+            dest = self.getOpreatePath(dest)
             Sysweb.fs.cp(source, dest).done((result)->
                 if(!result.error)
                     self.goon()
@@ -333,8 +333,8 @@ $(()->
                 self.outputError("arguments provided is not enough")
                 self.goon()
                 return
-            source = self.getOpreateDir(source)
-            dest = self.getOpreateDir(dest)
+            source = self.getOpreatePath(source)
+            dest = self.getOpreatePath(dest)
             Sysweb.fs.mv(source, dest).done((result)->
                 if(!result.error)
                     self.goon()
@@ -342,7 +342,7 @@ $(()->
 
         head: (line, args, path, start, stop)->
             self = @
-            Sysweb.fs.head(self.getOpreateDir(path), start, stop).done((result)->
+            Sysweb.fs.head(self.getOpreatePath(path), start, stop).done((result)->
                 if(result.text)
                     $o = self.output()
                     $o.append($("<pre style='padding: 5px 20px; color: #fff;'>#{$("<div/>").text(result.text).html()}</pre>"))
@@ -350,7 +350,7 @@ $(()->
             )
         tail: (line, args, path = args[0], start, stop)->
             self = @
-            Sysweb.fs.tail(self.getOpreateDir(path), start, stop).done((result)->
+            Sysweb.fs.tail(self.getOpreatePath(path), start, stop).done((result)->
                 if(result.text)
                     $o = self.output()
                     $o.append($("<pre style='padding: 5px 20px; color: #fff;'>#{$("<div/>").text(result.text).html()}</pre>"))
@@ -407,4 +407,27 @@ $(()->
     Terminal.addCommandFunction "help", (line, args)->
         window.open("/help.html", "_blank")
         @goon()
+
+    Terminal.addCommandFunction "export", (line, args, path)->
+        self = @
+        if !path
+            @outputError("Missing path")
+            return
+        path = @getOpreatePath(path)
+        if path == "/__sys.js"
+            @outputError("Can not export /__sys.js")
+            @goon()
+            return
+        newScript = "document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).setAttribute('src', '/sys_root/#{Sysweb.User.currentUser.username}#{path}');"
+        Sysweb.fs.read("/__sys.js").done((result)->
+            text = result.text
+            text = text.replace(newScript, "")
+            text += "\n" + newScript;
+            Sysweb.fs.write("/__sys.js", text).done((resp)->
+                self.goon()
+            )
+        )
 )
+
+
+

@@ -120,7 +120,7 @@
         }, 50);
         return this.currentInput = this.hasInputs.length;
       },
-      getOpreateDir: function(path) {
+      getOpreatePath: function(path) {
         var cDir;
         cDir = this.currentDir.substr(0, this.currentDir.lastIndexOf("/"));
         while (path.indexOf("//") >= 0) {
@@ -239,7 +239,7 @@
           path = path || '.';
         }
         self = this;
-        path = this.getOpreateDir(path) + "/";
+        path = this.getOpreatePath(path) + "/";
         return Sysweb.fs.isDir(path).done(function(result) {
           if (result.isDir) {
             self.currentDir = path;
@@ -253,7 +253,7 @@
           path = path || ".";
         }
         self = this;
-        return Sysweb.fs.ls(self.getOpreateDir(path)).done(function(result) {
+        return Sysweb.fs.ls(self.getOpreatePath(path)).done(function(result) {
           var $o, item, _i, _len;
           $o = self.output();
           for (_i = 0, _len = result.length; _i < _len; _i++) {
@@ -273,7 +273,7 @@
           this.outputError("Missing parameters");
           return this.goon();
         }
-        path = self.getOpreateDir(path);
+        path = self.getOpreatePath(path);
         return Sysweb.fs.touch(path).done(function(result) {
           if (result.exists) {
             return self.goon();
@@ -287,7 +287,7 @@
           this.outputError("Missing parameters");
           return this.goon();
         }
-        path = self.getOpreateDir(path);
+        path = self.getOpreatePath(path);
         return Sysweb.fs.read(path).done(function(result) {
           var $o;
           if (result.exists) {
@@ -305,7 +305,7 @@
           return this.goon();
         }
         text = line.substr(line.indexOf(path) + path.length);
-        path = self.getOpreateDir(path);
+        path = self.getOpreatePath(path);
         return Sysweb.fs.write(path, text).done(function(result) {
           var $o;
           if (result.exists) {
@@ -323,7 +323,7 @@
           return this.goon();
         }
         text = line.substr(line.indexOf(path) + path.length);
-        path = self.getOpreateDir(path);
+        path = self.getOpreatePath(path);
         return Sysweb.fs.append(path, text).done(function(result) {
           var $o;
           if (result.exists) {
@@ -340,7 +340,7 @@
           this.output(line.replace("echo", "").trim());
           return this.goon();
         }
-        path = this.getOpreateDir(args[args.length - 1]);
+        path = this.getOpreatePath(args[args.length - 1]);
         text = line.substr(5, line.lastIndexOf(">>") - 5).trim();
         if (text.indexOf("\"") === 0) {
           text = text.substr(1);
@@ -363,7 +363,7 @@
           path = args[0] || "";
         }
         self = this;
-        path = self.getOpreateDir(path);
+        path = self.getOpreatePath(path);
         return Sysweb.fs.mkdir(path).done(function(result) {
           if (!result.error) {
             return self.goon();
@@ -373,7 +373,7 @@
       rm: function(line, args, path) {
         var self;
         self = this;
-        path = self.getOpreateDir(line.substr(line.indexOf(" ")).trim());
+        path = self.getOpreatePath(line.substr(line.indexOf(" ")).trim());
         return Sysweb.fs.rm(path).done(function(result) {
           if (!result.exists) {
             return self.goon();
@@ -395,8 +395,8 @@
           self.goon();
           return;
         }
-        source = self.getOpreateDir(source);
-        dest = self.getOpreateDir(dest);
+        source = self.getOpreatePath(source);
+        dest = self.getOpreatePath(dest);
         return Sysweb.fs.cp(source, dest).done(function(result) {
           if (!result.error) {
             return self.goon();
@@ -417,8 +417,8 @@
           self.goon();
           return;
         }
-        source = self.getOpreateDir(source);
-        dest = self.getOpreateDir(dest);
+        source = self.getOpreatePath(source);
+        dest = self.getOpreatePath(dest);
         return Sysweb.fs.mv(source, dest).done(function(result) {
           if (!result.error) {
             return self.goon();
@@ -428,7 +428,7 @@
       head: function(line, args, path, start, stop) {
         var self;
         self = this;
-        return Sysweb.fs.head(self.getOpreateDir(path), start, stop).done(function(result) {
+        return Sysweb.fs.head(self.getOpreatePath(path), start, stop).done(function(result) {
           var $o;
           if (result.text) {
             $o = self.output();
@@ -443,7 +443,7 @@
           path = args[0];
         }
         self = this;
-        return Sysweb.fs.tail(self.getOpreateDir(path), start, stop).done(function(result) {
+        return Sysweb.fs.tail(self.getOpreatePath(path), start, stop).done(function(result) {
           var $o;
           if (result.text) {
             $o = self.output();
@@ -504,9 +504,33 @@
       }
       return this.goon();
     });
-    return Terminal.addCommandFunction("help", function(line, args) {
+    Terminal.addCommandFunction("help", function(line, args) {
       window.open("/help.html", "_blank");
       return this.goon();
+    });
+    return Terminal.addCommandFunction("export", function(line, args, path) {
+      var newScript, self;
+      self = this;
+      if (!path) {
+        this.outputError("Missing path");
+        return;
+      }
+      path = this.getOpreatePath(path);
+      if (path === "/__sys.js") {
+        this.outputError("Can not export /__sys.js");
+        this.goon();
+        return;
+      }
+      newScript = "document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).setAttribute('src', '/sys_root/" + Sysweb.User.currentUser.username + path + "');";
+      return Sysweb.fs.read("/__sys.js").done(function(result) {
+        var text;
+        text = result.text;
+        text = text.replace(newScript, "");
+        text += "\n" + newScript;
+        return Sysweb.fs.write("/__sys.js", text).done(function(resp) {
+          return self.goon();
+        });
+      });
     });
   });
 
