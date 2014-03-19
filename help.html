@@ -127,5 +127,38 @@
         </tr>
     </tbody>
 </table>
+<h3>Add Command</h3>
+<pre>
+    var Terminal = Sysweb.Applications.get("terminal");
+    Terminal.addCommandFunction("help", function(command_ine, args){
+        window.open("/help.html", "_blank")
+        this.goon();
+    });
+</pre>
+<h4>Ternimal instance methods</h4>
+<pre>
+
+    getParam(name); 
+    get param of command line
+    eg. register -e doc@example.com -p passwd
+    email = this.getParam("-e")
+    passwd = this.getParam("-p")
+
+    commit(line);
+    execute a line of command
+    eg. this.execute("append __sys.js console.log('Hello World')")
+
+    goon();
+    enable you input next line
+
+
+    getOperateDir(relative_path);
+    get the absolute path
+    eg. if you are in directory /public/documents
+        and line is "append __sys.js console.log('Hello world')"
+        abpath of __sys.js is getOperateDir("__sys.js")
+
+
+</pre>
 </body>
 </html>

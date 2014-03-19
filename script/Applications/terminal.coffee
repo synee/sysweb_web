@@ -1,7 +1,7 @@
 $(()->
     Applications = window.Sysweb.Applications
 
-    Terminal = Events.extend
+    Terminal = window.Terminal = Events.extend
         currentDir: "/"
 
         template: """
@@ -153,6 +153,13 @@ $(()->
             KeyBoardMaps.register("ctrl+c", ()->
                 self.commit('')
                 self.goon()
+            )
+
+        addHotKey: (keyCombe, callback)->
+
+            self = @
+            KeyBoardMaps.register(keyCombe, ()->
+                callback.apply(self, arguments);
             )
 
 

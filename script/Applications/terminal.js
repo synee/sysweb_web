@@ -3,7 +3,7 @@
   $(function() {
     var Applications, Terminal, terminal;
     Applications = window.Sysweb.Applications;
-    Terminal = Events.extend({
+    Terminal = window.Terminal = Events.extend({
       currentDir: "/",
       template: "<div id='terminal' style=' font-family: monospace; font-size: 12px;'>\n    <div id='terminal_output'></div>\n    <div id='terminal_input' style='margin-bottom: 250px'>\n        <span id='terminal_path' style='color: #f8c; display: inline-block; float: left; line-height: 19px; padding: 0 6px 0 0;'>" + this.currentDir + " ~#</span>\n        <input style='margin: 0;color: #0fc; background: #333; border: 0; outline: none; width: 80%; float: left; font-family: monospace;padding-top: 2px; '/>\n    </div>\n</div>",
       style: {
@@ -173,6 +173,13 @@
         return KeyBoardMaps.register("ctrl+c", function() {
           self.commit('');
           return self.goon();
+        });
+      },
+      addHotKey: function(keyCombe, callback) {
+        var self;
+        self = this;
+        return KeyBoardMaps.register(keyCombe, function() {
+          return callback.apply(self, arguments);
         });
       },
       initEvents: function() {
