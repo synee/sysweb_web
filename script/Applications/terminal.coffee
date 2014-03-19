@@ -7,7 +7,7 @@ $(()->
         template: """
                     <div id='terminal' style=' font-family: monospace; font-size: 12px;'>
                         <div id='terminal_output'></div>
-                        <div id='terminal_input' style='margin-bottom: 250px'>
+                        <div id='terminal_input' style='margin-bottom: 250px; clear: both;'>
                             <span id='terminal_path' style='color: #f8c; display: inline-block; float: left; line-height: 19px; padding: 0 6px 0 0;'>#{@currentDir} ~#</span>
                             <input style='margin: 0;color: #0fc; background: #333; border: 0; outline: none; width: 80%; float: left; font-family: monospace;padding-top: 2px; '/>
                         </div>
@@ -60,7 +60,7 @@ $(()->
 
     # 输出 Element
         outputEl: (message) ->
-            $("""<div class='output_line' style='font-family: monospace; font-size: 12px; padding: 2px 0;'>#{message}</div>""")
+            $("""<div class='output_line' style='font-family: monospace; font-size: 12px; padding: 2px 0;'></div>""").append(message)
 
     # 输出
         output: (message = '') ->
@@ -156,7 +156,6 @@ $(()->
             )
 
         addHotKey: (keyCombe, callback)->
-
             self = @
             KeyBoardMaps.register(keyCombe, ()->
                 callback.apply(self, arguments);
@@ -202,6 +201,27 @@ $(()->
     # 添加命令
     Terminal.addCommandFunction = (name, fn = (args)->)->
         Terminal.commandFunctions[name] = fn
+        Terminal.commands[Terminal.commands.length] = name
+
+    Terminal.commands = [
+        "pwd"
+        "cd"
+        "ls"
+        "touch"
+        "stat"
+        "read"
+        "write"
+        "append"
+        "echo"
+        "mkdir"
+        "rm"
+        "cp"
+        "mv"
+        "head"
+        "tail"
+    ]
+
+    fs = Sysweb.fs
 
     # Terminal 命令
     Terminal.commandFunctions =
@@ -235,6 +255,21 @@ $(()->
             Sysweb.fs.touch(path).done((result)->
                 if(result.exists)
                     self.goon()
+            )
+
+        stat: (line, args, path)->
+            self = @
+            fs.stat(@getOpreatePath(path)).done((result)->
+                $table = $("<table/>")
+                self.output($table)
+                for key, value of result
+                    if key == "modify"
+                        value = new Date(value);
+                    $tr = $("<tr/>")
+                    $table.append($tr)
+                    $tr.append($("<td style='padding: 2px 5px;'>#{key}</td>"))
+                    $tr.append($("<td style='padding: 2px 5px;'>#{value}</td>"))
+                self.goon()
             )
 
         read: (line, args, path)->
@@ -313,6 +348,7 @@ $(()->
                 if(!result.exists)
                     self.goon()
             )
+
         cp: (line, args, source = args[0], dest = args[1])->
             self = @
             if (args.length < 2)
@@ -348,6 +384,7 @@ $(()->
                     $o.append($("<pre style='padding: 5px 20px; color: #fff;'>#{$("<div/>").text(result.text).html()}</pre>"))
                     self.goon()
             )
+
         tail: (line, args, path = args[0], start, stop)->
             self = @
             Sysweb.fs.tail(self.getOpreatePath(path), start, stop).done((result)->
@@ -360,7 +397,7 @@ $(()->
     terminal = Terminal.getInstance()
 
     # Login
-    Terminal.addCommandFunction("login", ()->
+    Terminal.addCommandFunction "login", ()->
         self = @
         email = @getParam("-e")
         password = @getParam("-p")
@@ -381,10 +418,9 @@ $(()->
         else
             terminal.outputError("Email and password are needed.")
             @goon()
-    )
 
     # Register
-    Terminal.addCommandFunction "register", ()->
+    Terminal.addCommandFunction "register", (line, args)->
         self = @
         email = @getParam("-e")
         password = @getParam("-p")
@@ -419,14 +455,20 @@ $(()->
             @goon()
             return
         newScript = "document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).setAttribute('src', '/sys_root/#{Sysweb.User.currentUser.username}#{path}');"
-        Sysweb.fs.read("/__sys.js").done((result)->
+        Sysweb.fs.read("/__sys.js").done (result)->
             text = result.text
             text = text.replace(newScript, "")
             text += "\n" + newScript;
-            Sysweb.fs.write("/__sys.js", text).done((resp)->
+            Sysweb.fs.write("/__sys.js", text).done ()->
                 self.goon()
-            )
-        )
+
+    Terminal.addCommandFunction "commands", (line, args) ->
+        $ul = $("<ul style='list-style-type: none; display: table;'/>")
+        @output($ul)
+        for command in Terminal.commands
+            $ul.append($("<li style='float: left; padding-right: 20px;'>#{command}</li>"))
+        @goon()
+
 )
 
 

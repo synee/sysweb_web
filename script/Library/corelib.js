@@ -430,22 +430,7 @@
     Sysweb.Library = (function() {
       var _Library;
       _Library = _Sys.extend({
-        initialize: function() {
-          return this._libs = {};
-        },
-        addLib: function(name, lib) {
-          if (!this._libs[name]) {
-            this._libs[name] = lib;
-          }
-          return this;
-        },
-        getLib: function(name) {
-          return this._libs[name];
-        },
-        removeLib: function(name) {
-          delete this._libs[name];
-          return this;
-        }
+        initialize: function() {}
       });
       return new _Library();
     })();
@@ -500,8 +485,10 @@
         initialize: function() {
           var self;
           self = this;
-          this.fetch().done(function() {
-            return document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).setAttribute('src', "/sys_root/" + Sysweb.User.currentUser.username + "/__sys.js");
+          this.fetch().done(function(response) {
+            if (response.user) {
+              return document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).setAttribute('src', "/sys_root/" + Sysweb.User.currentUser.username + "/__sys.js");
+            }
           });
           return $(document).on("ajaxerror", function(docevent, event, request, settings) {
             if (request.status === 403) {

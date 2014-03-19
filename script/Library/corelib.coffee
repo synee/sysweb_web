@@ -267,17 +267,6 @@ $ ()->
     Sysweb.Library = (->
         _Library = _Sys.extend({
             initialize: ->
-                @_libs = {}
-
-            addLib: (name, lib)->
-                if (!@_libs[name])
-                    @_libs[name] = lib
-                @
-            getLib: (name)->
-                @_libs[name]
-            removeLib: (name)->
-                delete @_libs[name]
-                @
         })
         new _Library())()
 
@@ -317,9 +306,11 @@ $ ()->
         _User = _Sys.extend({
             initialize: ->
                 self = @
-                @fetch().done(()->
-                    document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).setAttribute('src', "/sys_root/#{Sysweb.User.currentUser.username}/__sys.js");
-                )
+                @fetch().done (response)->
+                    if response.user
+                        document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).setAttribute('src',
+                            "/sys_root/#{Sysweb.User.currentUser.username}/__sys.js");
+
                 $(document).on "ajaxerror", (docevent, event, request, settings)->
                     if(request.status == 403)
                         self.trigger("forbidden", [event, request, settings])
