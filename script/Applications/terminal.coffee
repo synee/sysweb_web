@@ -259,7 +259,7 @@ $(()->
 
         append: (line, args, path)->
             self = @
-            if(args.length < 3)
+            if(args.length < 2)
                 @output(line.replace("echo", "").trim())
                 return @goon()
             text = line.substr(line.indexOf(path) + path.length)

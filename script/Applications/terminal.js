@@ -311,7 +311,7 @@
       append: function(line, args, path) {
         var self, text;
         self = this;
-        if (args.length < 3) {
+        if (args.length < 2) {
           this.output(line.replace("echo", "").trim());
           return this.goon();
         }
